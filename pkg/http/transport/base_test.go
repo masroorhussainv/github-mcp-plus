@@ -40,13 +40,16 @@ func TestNewBaseTransport_SkipSSLVerify_ConnectsToSelfSignedServer(t *testing.T)
 
 	// Without skip: connection should fail due to unknown certificate authority
 	strictClient := &http.Client{Transport: NewBaseTransport(false)}
-	_, err := strictClient.Get(server.URL) //nolint:noctx
+	resp, err := strictClient.Get(server.URL) //nolint:noctx
+	if resp != nil {
+		resp.Body.Close()
+	}
 	assert.Error(t, err, "expected TLS error when connecting without skip")
 	assert.Contains(t, err.Error(), "certificate")
 
 	// With skip: connection should succeed
 	skipClient := &http.Client{Transport: NewBaseTransport(true)}
-	resp, err := skipClient.Get(server.URL) //nolint:noctx
+	resp, err = skipClient.Get(server.URL) //nolint:noctx
 	require.NoError(t, err, "expected successful connection when skipping SSL verification")
 	defer resp.Body.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -66,7 +69,10 @@ func TestNewBaseTransport_NoSkip_UsesDefaultTLSVerification(t *testing.T) {
 	req, err := http.NewRequest(http.MethodGet, server.URL, nil) //nolint:noctx
 	require.NoError(t, err)
 
-	_, err = transport.RoundTrip(req)
+	rtResp, err := transport.RoundTrip(req)
+	if rtResp != nil {
+		rtResp.Body.Close()
+	}
 
 	var tlsErr *tls.CertificateVerificationError
 	assert.ErrorAs(t, err, &tlsErr, "expected a TLS certificate verification error")
