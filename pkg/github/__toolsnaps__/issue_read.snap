@@ -6,6 +6,22 @@
   "description": "Get information about a specific issue in a GitHub repository.",
   "inputSchema": {
     "properties": {
+      "author": {
+        "description": "Filter comments by author login. Only applies to get_comments.",
+        "type": "string"
+      },
+      "bodyContains": {
+        "description": "Filter comments to those whose body contains this string (case-insensitive substring or regex). Only applies to get_comments.",
+        "type": "string"
+      },
+      "createdAfter": {
+        "description": "Filter comments created after this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Only applies to get_comments.",
+        "type": "string"
+      },
+      "createdBefore": {
+        "description": "Filter comments created before this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Only applies to get_comments.",
+        "type": "string"
+      },
       "issue_number": {
         "description": "The number of the issue",
         "type": "number"
