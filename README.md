@@ -823,6 +823,10 @@ The following sets of tools are available:
 
 - **issue_read** - Get issue details
   - **Required OAuth Scopes**: `repo`
+  - `author`: Filter comments by author login. Only applies to get_comments. (string, optional)
+  - `bodyContains`: Filter comments to those whose body contains this string (case-insensitive substring or regex). Only applies to get_comments. (string, optional)
+  - `createdAfter`: Filter comments created after this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Only applies to get_comments. (string, optional)
+  - `createdBefore`: Filter comments created before this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Only applies to get_comments. (string, optional)
   - `issue_number`: The number of the issue (number, required)
   - `method`: The read operation to perform on a single issue.
     Options are:
@@ -1093,6 +1097,11 @@ The following sets of tools are available:
 
 - **pull_request_read** - Get details for a single pull request
   - **Required OAuth Scopes**: `repo`
+  - `author`: Filter comments by author login (case-insensitive). Applies to get_comments and get_review_comments. (string, optional)
+  - `bodyContains`: Filter comments to those whose body contains this string (case-insensitive substring or regex). Applies to get_comments and get_review_comments. (string, optional)
+  - `createdAfter`: Filter by creation timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_comments and get_review_comments. (string, optional)
+  - `createdBefore`: Filter by creation timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_comments and get_review_comments. (string, optional)
+  - `filePath`: Glob pattern to filter review comment threads by file path (e.g. src/**/*.ts). Applies to get_review_comments only. (string, optional)
   - `method`: Action to specify what pull request data needs to be retrieved from GitHub. 
     Possible options: 
      1. get - Get details of a specific pull request.
@@ -1109,6 +1118,10 @@ The following sets of tools are available:
   - `perPage`: Results per page for pagination (min 1, max 100) (number, optional)
   - `pullNumber`: Pull request number (number, required)
   - `repo`: Repository name (string, required)
+  - `reviewer`: Filter reviews by reviewer login (case-insensitive). Applies to get_reviews only. (string, optional)
+  - `state`: Filter reviews by state. Valid values: APPROVED, CHANGES_REQUESTED, COMMENTED, DISMISSED, PENDING. Applies to get_reviews only. (string, optional)
+  - `submittedAfter`: Filter reviews submitted after this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_reviews only. (string, optional)
+  - `submittedBefore`: Filter reviews submitted before this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_reviews only. (string, optional)
 
 - **pull_request_review_write** - Write operations (create, submit, delete) on pull request reviews.
   - **Required OAuth Scopes**: `repo`
@@ -1223,6 +1236,12 @@ The following sets of tools are available:
   - `owner`: Repository owner (string, required)
   - `repo`: Repository name (string, required)
   - `tag`: Tag name (e.g., 'v1.0.0') (string, required)
+
+- **get_repository** - Get repository
+  - **Required OAuth Scopes**: `repo`
+  - `owner`: Repository owner (user or organization) (string, optional)
+  - `repo`: Repository name (string, optional)
+  - `url`: GitHub repository URL (e.g. https://github.com/owner/repo). If provided, owner and repo are parsed from the URL. (string, optional)
 
 - **get_tag** - Get tag details
   - **Required OAuth Scopes**: `repo`
