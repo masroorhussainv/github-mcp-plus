@@ -383,6 +383,50 @@ If you don't have Docker, you can use `go build` to build the binary in the
 }
 ```
 
+#### Building the binary locally
+
+Clone the repo and build:
+
+```bash
+git clone https://github.com/masroorhussainv/github-mcp-plus.git
+cd github-mcp-plus
+go build -o ~/bin/github-mcp-plus ./cmd/github-mcp-server
+```
+
+The binary will be at `~/bin/github-mcp-plus` (i.e. `/Users/<you>/bin/github-mcp-plus`).
+
+#### Roo Code MCP config
+
+Add the following to your Roo Code MCP configuration:
+
+```json
+"github": {
+  "command": "/Users/<you>/bin/github-mcp-plus",
+  "args": ["stdio"],
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-pat>",
+    "GITHUB_TOOLSETS": "repos,issues,pull_requests",
+    "GITHUB_READ_ONLY": "0"
+  }
+}
+```
+
+For GitHub Enterprise with a self-signed certificate:
+
+```json
+"github": {
+  "command": "/Users/<you>/bin/github-mcp-plus",
+  "args": ["stdio"],
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-pat>",
+    "GITHUB_GH_HOST": "https://github.yourcompany.com",
+    "GITHUB_SKIP_SSL_VERIFY": "true",
+    "GITHUB_TOOLSETS": "repos,issues,pull_requests",
+    "GITHUB_READ_ONLY": "0"
+  }
+}
+```
+
 ### CLI utilities
 
 The `github-mcp-server` binary includes a few CLI subcommands that are helpful for debugging and exploring the server.
