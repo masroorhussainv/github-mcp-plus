@@ -138,6 +138,34 @@ type MinimalResponse struct {
 	URL string `json:"url"`
 }
 
+// PageBasedPagination holds pagination metadata for REST page-based responses.
+type PageBasedPagination struct {
+	CurrentPage int `json:"currentPage"`
+	NextPage    int `json:"nextPage,omitempty"` // 0 means no next page
+	LastPage    int `json:"lastPage"`
+	HasNextPage bool `json:"hasNextPage"`
+}
+
+// PaginatedResult wraps any slice result with REST pagination metadata so
+// agents can reliably determine whether more pages exist.
+type PaginatedResult[T any] struct {
+	Items      T                   `json:"items"`
+	Pagination PageBasedPagination `json:"pagination"`
+}
+
+// NewPaginatedResult builds a PaginatedResult from a GitHub REST response and the current page number.
+func NewPaginatedResult[T any](items T, currentPage int, resp *github.Response) PaginatedResult[T] {
+	return PaginatedResult[T]{
+		Items: items,
+		Pagination: PageBasedPagination{
+			CurrentPage: currentPage,
+			NextPage:    resp.NextPage,
+			LastPage:    resp.LastPage,
+			HasNextPage: resp.NextPage > 0,
+		},
+	}
+}
+
 type MinimalProject struct {
 	ID               *int64            `json:"id,omitempty"`
 	NodeID           *string           `json:"node_id,omitempty"`

@@ -169,7 +169,7 @@ Possible options:
 				if err != nil {
 					return utils.NewToolResultError(err.Error()), nil, nil
 				}
-				result, err := GetPullRequestReviews(ctx, client, deps, owner, repo, pullNumber, reviewFilters)
+				result, err := GetPullRequestReviews(ctx, client, deps, owner, repo, pullNumber, pagination, reviewFilters)
 				return result, nil, err
 			case "get_comments":
 				commentFilters, err := optionalCommentFilters(args)
@@ -377,12 +377,7 @@ func GetPullRequestCheckRuns(ctx context.Context, client *github.Client, owner, 
 		CheckRuns:  minimalCheckRuns,
 	}
 
-	r, err := json.Marshal(minimalResult)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal response: %w", err)
-	}
-
-	return utils.NewToolResultText(string(r)), nil
+	return MarshalledTextResult(NewPaginatedResult(minimalResult, pagination.Page, resp)), nil
 }
 
 func GetPullRequestFiles(ctx context.Context, client *github.Client, owner, repo string, pullNumber int, pagination PaginationParams) (*mcp.CallToolResult, error) {
@@ -410,7 +405,7 @@ func GetPullRequestFiles(ctx context.Context, client *github.Client, owner, repo
 
 	minimalFiles := convertToMinimalPRFiles(files)
 
-	return MarshalledTextResult(minimalFiles), nil
+	return MarshalledTextResult(NewPaginatedResult(minimalFiles, pagination.Page, resp)), nil
 }
 
 // GraphQL types for review threads query
@@ -529,14 +524,17 @@ func GetPullRequestReviewComments(ctx context.Context, gqlClient *githubv4.Clien
 	return MarshalledTextResult(result), nil
 }
 
-func GetPullRequestReviews(ctx context.Context, client *github.Client, deps ToolDependencies, owner, repo string, pullNumber int, filters ReviewFilters) (*mcp.CallToolResult, error) {
+func GetPullRequestReviews(ctx context.Context, client *github.Client, deps ToolDependencies, owner, repo string, pullNumber int, pagination PaginationParams, filters ReviewFilters) (*mcp.CallToolResult, error) {
 	cache, err := deps.GetRepoAccessCache(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get repo access cache: %w", err)
 	}
 	ff := deps.GetFlags(ctx)
 
-	reviews, resp, err := client.PullRequests.ListReviews(ctx, owner, repo, pullNumber, nil)
+	reviews, resp, err := client.PullRequests.ListReviews(ctx, owner, repo, pullNumber, &github.ListOptions{
+		Page:    pagination.Page,
+		PerPage: pagination.PerPage,
+	})
 	if err != nil {
 		return ghErrors.NewGitHubAPIErrorResponse(ctx,
 			"failed to get pull request reviews",
@@ -579,8 +577,10 @@ func GetPullRequestReviews(ctx context.Context, client *github.Client, deps Tool
 		minimalReviews = append(minimalReviews, convertToMinimalPullRequestReview(review))
 	}
 
-	return MarshalledTextResult(applyReviewFilters(minimalReviews, filters)), nil
+	filtered := applyReviewFilters(minimalReviews, filters)
+	return MarshalledTextResult(NewPaginatedResult(filtered, pagination.Page, resp)), nil
 }
+
 
 // PullRequestWriteUIResourceURI is the URI for the create_pull_request tool's MCP App UI resource.
 const PullRequestWriteUIResourceURI = "ui://github-mcp-server/pr-write"

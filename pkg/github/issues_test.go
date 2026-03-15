@@ -2125,9 +2125,10 @@ func Test_GetIssueComments(t *testing.T) {
 			textContent := getTextResult(t, result)
 
 			// Unmarshal and verify the result
-			var returnedComments []MinimalIssueComment
-			err = json.Unmarshal([]byte(textContent.Text), &returnedComments)
+			var paged PaginatedResult[[]MinimalIssueComment]
+			err = json.Unmarshal([]byte(textContent.Text), &paged)
 			require.NoError(t, err)
+			returnedComments := paged.Items
 			assert.Equal(t, len(tc.expectedComments), len(returnedComments))
 			for i := range tc.expectedComments {
 				require.NotNil(t, tc.expectedComments[i].User)
@@ -2683,9 +2684,10 @@ func Test_GetSubIssues(t *testing.T) {
 			textContent := getTextResult(t, result)
 
 			// Unmarshal and verify the result
-			var returnedSubIssues []*github.Issue
-			err = json.Unmarshal([]byte(textContent.Text), &returnedSubIssues)
+			var paged PaginatedResult[[]*github.Issue]
+			err = json.Unmarshal([]byte(textContent.Text), &paged)
 			require.NoError(t, err)
+			returnedSubIssues := paged.Items
 
 			assert.Len(t, returnedSubIssues, len(tc.expectedSubIssues))
 			for i, subIssue := range returnedSubIssues {
