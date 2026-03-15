@@ -401,6 +401,50 @@ If you don't have Docker, you can use `go build` to build the binary in the
 }
 ```
 
+#### Building the binary locally
+
+Clone the repo and build:
+
+```bash
+git clone https://github.com/masroorhussainv/github-mcp-plus.git
+cd github-mcp-plus
+go build -o ~/bin/github-mcp-plus ./cmd/github-mcp-server
+```
+
+The binary will be at `~/bin/github-mcp-plus` (i.e. `/Users/<you>/bin/github-mcp-plus`).
+
+#### Roo Code MCP config
+
+Add the following to your Roo Code MCP configuration:
+
+```json
+"github": {
+  "command": "/Users/<you>/bin/github-mcp-plus",
+  "args": ["stdio"],
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-pat>",
+    "GITHUB_TOOLSETS": "repos,issues,pull_requests",
+    "GITHUB_READ_ONLY": "0"
+  }
+}
+```
+
+For GitHub Enterprise with a self-signed certificate:
+
+```json
+"github": {
+  "command": "/Users/<you>/bin/github-mcp-plus",
+  "args": ["stdio"],
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-pat>",
+    "GITHUB_GH_HOST": "https://github.yourcompany.com",
+    "GITHUB_SKIP_SSL_VERIFY": "true",
+    "GITHUB_TOOLSETS": "repos,issues,pull_requests",
+    "GITHUB_READ_ONLY": "0"
+  }
+}
+```
+
 ### CLI utilities
 
 The `github-mcp-server` binary includes a few CLI subcommands that are helpful for debugging and exploring the server.
@@ -841,6 +885,10 @@ The following sets of tools are available:
 
 - **issue_read** - Get issue details
   - **Required OAuth Scopes**: `repo`
+  - `author`: Filter comments by author login. Only applies to get_comments. (string, optional)
+  - `bodyContains`: Filter comments to those whose body contains this string (case-insensitive substring or regex). Only applies to get_comments. (string, optional)
+  - `createdAfter`: Filter comments created after this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Only applies to get_comments. (string, optional)
+  - `createdBefore`: Filter comments created before this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Only applies to get_comments. (string, optional)
   - `issue_number`: The number of the issue (number, required)
   - `method`: The read operation to perform on a single issue.
     Options are:
@@ -1111,6 +1159,11 @@ The following sets of tools are available:
 
 - **pull_request_read** - Get details for a single pull request
   - **Required OAuth Scopes**: `repo`
+  - `author`: Filter comments by author login (case-insensitive). Applies to get_comments and get_review_comments. (string, optional)
+  - `bodyContains`: Filter comments to those whose body contains this string (case-insensitive substring or regex). Applies to get_comments and get_review_comments. (string, optional)
+  - `createdAfter`: Filter by creation timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_comments and get_review_comments. (string, optional)
+  - `createdBefore`: Filter by creation timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_comments and get_review_comments. (string, optional)
+  - `filePath`: Glob pattern to filter review comment threads by file path (e.g. src/**/*.ts). Applies to get_review_comments only. (string, optional)
   - `method`: Action to specify what pull request data needs to be retrieved from GitHub. 
     Possible options: 
      1. get - Get details of a specific pull request.
@@ -1127,6 +1180,10 @@ The following sets of tools are available:
   - `perPage`: Results per page for pagination (min 1, max 100) (number, optional)
   - `pullNumber`: Pull request number (number, required)
   - `repo`: Repository name (string, required)
+  - `reviewer`: Filter reviews by reviewer login (case-insensitive). Applies to get_reviews only. (string, optional)
+  - `state`: Filter reviews by state. Valid values: APPROVED, CHANGES_REQUESTED, COMMENTED, DISMISSED, PENDING. Applies to get_reviews only. (string, optional)
+  - `submittedAfter`: Filter reviews submitted after this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_reviews only. (string, optional)
+  - `submittedBefore`: Filter reviews submitted before this timestamp (RFC3339, e.g. 2024-01-15T10:00:00Z). Applies to get_reviews only. (string, optional)
 
 - **pull_request_review_write** - Write operations (create, submit, delete) on pull request reviews.
   - **Required OAuth Scopes**: `repo`
@@ -1241,6 +1298,12 @@ The following sets of tools are available:
   - `owner`: Repository owner (string, required)
   - `repo`: Repository name (string, required)
   - `tag`: Tag name (e.g., 'v1.0.0') (string, required)
+
+- **get_repository** - Get repository
+  - **Required OAuth Scopes**: `repo`
+  - `owner`: Repository owner (user or organization) (string, optional)
+  - `repo`: Repository name (string, optional)
+  - `url`: GitHub repository URL (e.g. https://github.com/owner/repo). If provided, owner and repo are parsed from the URL. (string, optional)
 
 - **get_tag** - Get tag details
   - **Required OAuth Scopes**: `repo`
