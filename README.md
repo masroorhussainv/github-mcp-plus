@@ -267,24 +267,6 @@ the hostname for GitHub Enterprise Server or GitHub Enterprise Cloud with data r
 }
 ```
 
-#### Skipping SSL verification
-
-If your GitHub Enterprise Server instance uses a self-signed or internally-signed TLS certificate, you can disable SSL verification with the `--skip-ssl-verify` flag or the `GITHUB_SKIP_SSL_VERIFY` environment variable.
-
-> **Warning:** Only use this in trusted internal environments. Disabling SSL verification exposes connections to potential man-in-the-middle attacks.
-
-```json
-"github": {
-    "command": "/path/to/github-mcp-server",
-    "args": ["stdio"],
-    "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-pat>",
-        "GITHUB_GH_HOST": "https://github.yourcompany.com",
-        "GITHUB_SKIP_SSL_VERIFY": "true"
-    }
-}
-```
-
 ## Installation
 
 ### Install in GitHub Copilot on VS Code
