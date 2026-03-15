@@ -1229,9 +1229,10 @@ func Test_GetPullRequestFiles(t *testing.T) {
 			textContent := getTextResult(t, result)
 
 			// Unmarshal and verify the result
-			var returnedFiles []MinimalPRFile
-			err = json.Unmarshal([]byte(textContent.Text), &returnedFiles)
+			var pagedFiles PaginatedResult[[]MinimalPRFile]
+			err = json.Unmarshal([]byte(textContent.Text), &pagedFiles)
 			require.NoError(t, err)
+			returnedFiles := pagedFiles.Items
 			assert.Len(t, returnedFiles, len(tc.expectedFiles))
 			for i, file := range returnedFiles {
 				assert.Equal(t, tc.expectedFiles[i].GetFilename(), file.Filename)
@@ -1545,9 +1546,10 @@ func Test_GetPullRequestCheckRuns(t *testing.T) {
 			textContent := getTextResult(t, result)
 
 			// Unmarshal and verify the result (using minimal type)
-			var returnedCheckRuns MinimalCheckRunsResult
-			err = json.Unmarshal([]byte(textContent.Text), &returnedCheckRuns)
+			var pagedCheckRuns PaginatedResult[MinimalCheckRunsResult]
+			err = json.Unmarshal([]byte(textContent.Text), &pagedCheckRuns)
 			require.NoError(t, err)
+			returnedCheckRuns := pagedCheckRuns.Items
 			assert.Equal(t, *tc.expectedCheckRuns.Total, returnedCheckRuns.TotalCount)
 			assert.Len(t, returnedCheckRuns.CheckRuns, len(tc.expectedCheckRuns.CheckRuns))
 			for i, checkRun := range returnedCheckRuns.CheckRuns {
@@ -2145,9 +2147,10 @@ func Test_GetPullRequestReviews(t *testing.T) {
 			textContent := getTextResult(t, result)
 
 			// Unmarshal and verify the result
-			var returnedReviews []MinimalPullRequestReview
-			err = json.Unmarshal([]byte(textContent.Text), &returnedReviews)
+			var pagedReviews PaginatedResult[[]MinimalPullRequestReview]
+			err = json.Unmarshal([]byte(textContent.Text), &pagedReviews)
 			require.NoError(t, err)
+			returnedReviews := pagedReviews.Items
 			assert.Len(t, returnedReviews, len(tc.expectedReviews))
 			for i, review := range returnedReviews {
 				assert.Equal(t, tc.expectedReviews[i].GetID(), review.ID)
