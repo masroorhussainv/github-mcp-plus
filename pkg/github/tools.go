@@ -183,9 +183,13 @@ func AllTools(t translations.TranslationHelperFunc) []inventory.ServerTool {
 		CreateBranch(t),
 		PushFiles(t),
 		DeleteFile(t),
-		ListStarredRepositories(t),
-		StarRepository(t),
-		UnstarRepository(t),
+
+		// Deactivated: Stargazer tools excluded to reduce agent tool clutter.
+		// This fork is scoped to issues, repos, PRs, and projects.
+		// Uncomment to re-enable:
+		// ListStarredRepositories(t),
+		// StarRepository(t),
+		// UnstarRepository(t),
 
 		// Git tools
 		GetRepositoryTree(t),
@@ -203,7 +207,9 @@ func AllTools(t translations.TranslationHelperFunc) []inventory.ServerTool {
 		SearchUsers(t),
 
 		// Organization tools
-		SearchOrgs(t),
+		// Deactivated: SearchOrgs excluded to reduce agent tool clutter.
+		// This fork is scoped to issues, repos, PRs, and projects.
+		// Uncomment to re-enable: SearchOrgs(t),
 
 		// Pull request tools
 		PullRequestRead(t),
@@ -226,20 +232,24 @@ func AllTools(t translations.TranslationHelperFunc) []inventory.ServerTool {
 		ListCodeScanningAlerts(t),
 
 		// Secret protection tools
-		GetSecretScanningAlert(t),
-		ListSecretScanningAlerts(t),
+		// Deactivated: Secret scanning tools excluded to reduce agent tool clutter.
+		// This fork is scoped to issues, repos, PRs, and projects.
+		// Uncomment to re-enable: GetSecretScanningAlert(t), ListSecretScanningAlerts(t),
 
 		// Dependabot tools
 		GetDependabotAlert(t),
 		ListDependabotAlerts(t),
 
 		// Notification tools
-		ListNotifications(t),
-		GetNotificationDetails(t),
-		DismissNotification(t),
-		MarkAllNotificationsRead(t),
-		ManageNotificationSubscription(t),
-		ManageRepositoryNotificationSubscription(t),
+		// Deactivated: Notification tools excluded to reduce agent tool clutter.
+		// This fork is scoped to issues, repos, PRs, and projects.
+		// Uncomment to re-enable:
+		// ListNotifications(t),
+		// GetNotificationDetails(t),
+		// DismissNotification(t),
+		// MarkAllNotificationsRead(t),
+		// ManageNotificationSubscription(t),
+		// ManageRepositoryNotificationSubscription(t),
 
 		// Discussion tools
 		ListDiscussions(t),
